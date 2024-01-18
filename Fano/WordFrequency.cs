@@ -9,28 +9,36 @@ namespace Fano
 {
     public class WordFrequency
     {
-        private BitArray _bitWord;
+        private BitArray _bits; //In the Shannon-Fano algorithm, a bit sequence, known as a bit-word, will be referred to simply as 'word'
         private int _frequency;
 
-        public WordFrequency( int size )
+        public WordFrequency(int size)
         {
-            _bitWord = new BitArray( size );
+            _bits = new BitArray(size);
+            _frequency = 0;
         }
 
-        public WordFrequency( BitArray bitWord )
+        public WordFrequency(BitArray bits)
         {
-            _bitWord = bitWord;
+            if (bits == null || bits.Length == 0)
+                throw new ArgumentException("BitArray must not be null or empty.");
+
+            _bits = bits;
             IncrementFrequency();
         }
 
         public int IncrementFrequency() => _frequency++;
 
-        public int Frequency() => _frequency;
-
-        public BitArray BitWord
+        public int Frequency 
         {
-            get { return _bitWord; }
-            set { _bitWord = value; }
+            get { return _frequency; }
+            private set { _frequency = value; }
+        }
+
+        public BitArray Bits
+        {
+            get { return _bits; }
+            set { _bits = value; }
         }
 
         public override bool Equals(object obj)
@@ -40,22 +48,12 @@ namespace Fano
 
             WordFrequency other = (WordFrequency)obj;
 
-            if (BitWord.Length != other.BitWord.Length) { return false; }
-
-            for (int i = 0; i < other.BitWord.Length; i++)
-            {
-                if (BitWord[i] != other.BitWord[i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return Bits.Length == other.Bits.Length && Bits.Cast<bool>().SequenceEqual(other.Bits.Cast<bool>());
         }
 
         public override int GetHashCode() 
         { 
-            return HashCode.Combine(BitWord, Frequency); 
+            return HashCode.Combine(Bits, Frequency); 
         }
         
     }
