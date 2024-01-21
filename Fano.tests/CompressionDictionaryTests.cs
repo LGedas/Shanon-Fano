@@ -10,25 +10,31 @@ namespace Fano.tests
     public class CompressionDictionaryTests
     {
         [Fact]
-        public void Constructor_FrequencyTable_CorrectIncialization()
+        public void Constructor_FrequencyTable_CorrectDictionary()
         {
             int expectedSize = 3;
             var expectedKeys = new int[] { 0, 5, 7 };
+    
+            // Dictionary values (words)
             var expectedBits = new List<BitArray>
             {
-                new BitArray(new[] { false,  }),
-                new BitArray(new[] { true, false }),
-                new BitArray(new[] { true, true }),
+                new BitArray(new[] { false  }),         // Expected: 0
+                new BitArray(new[] { true, false }),    // Expected: 10
+                new BitArray(new[] { true, true }),     // Expected: 11
             };
 
-            var frequency1 = new WordFrequency(new BitArray(new bool[] { false, false, false })); //0*2^2 + 0*2^1 + 0*2^0 = 0
-            for (int i = 0; i < 3; i++) { frequency1.IncrementFrequency(); } //Frequency 3
+            // Dictionary keys (codes) 
+            var bitWord1 = new BitArray(new bool[] { false, false, false });    // 000 int represantation: 0 
+            var bitWord2 = new BitArray(new bool[] { true, false, true });      // 101 int represantation: 5 
+            var bitWord3 = new BitArray(new bool[] { true, true, true });       // 111 int represantation: 7 
 
-            var frequency2 = new WordFrequency(new BitArray(new bool[] { true, false, true })); //1*2^2 + 0*2^1 + 1*2^0 = 5
-            for (int i = 0; i < 2; i++) { frequency2.IncrementFrequency(); } //Frequency 2
+            var frequency1 = new WordFrequency(bitWord1);
+            for (int i = 0; i < 3; i++) { frequency1.IncrementFrequency(); }    // Frequency 3
 
-            var frequency3 = new WordFrequency(new BitArray(new bool[] { true, true, true })); //1*2^2 + 1*2^1 + 1*2^0 = 7
-            //Frequency 1
+            var frequency2 = new WordFrequency(bitWord2);
+            for (int i = 0; i < 2; i++) { frequency2.IncrementFrequency(); }    // Frequency 2
+           
+            var frequency3 = new WordFrequency(bitWord3);                       // Frequency 1
 
             List<WordFrequency> frequencies = new List<WordFrequency>
             {
@@ -37,17 +43,16 @@ namespace Fano.tests
                 frequency3
              };
 
-            CompressionDictionary compressionDictionary = new CompressionDictionary(frequencies);
-            compressionDictionary.GenerateValues();
+            Dictionary<int, BitArray> wordCodesDictionary = DictionaryGenerator.For(frequencies);
 
-            Assert.Equal(expectedSize, compressionDictionary.Dictionary.Count);
-            Assert.True(compressionDictionary.Dictionary.ContainsKey(expectedKeys[0]));
-            Assert.True(compressionDictionary.Dictionary.ContainsKey(expectedKeys[1]));
-            Assert.True(compressionDictionary.Dictionary.ContainsKey(expectedKeys[2]));
+            Assert.Equal(expectedSize, wordCodesDictionary.Count);
+            Assert.True(wordCodesDictionary.ContainsKey(expectedKeys[0]));
+            Assert.True(wordCodesDictionary.ContainsKey(expectedKeys[1]));
+            Assert.True(wordCodesDictionary.ContainsKey(expectedKeys[2]));
 
-            Assert.Equal(expectedBits[0], compressionDictionary.Dictionary[expectedKeys[0]]);
-            Assert.Equal(expectedBits[1], compressionDictionary.Dictionary[expectedKeys[1]]);
-            Assert.Equal(expectedBits[2], compressionDictionary.Dictionary[expectedKeys[2]]);
+            Assert.Equal(expectedBits[0], wordCodesDictionary[expectedKeys[0]]);
+            Assert.Equal(expectedBits[1], wordCodesDictionary[expectedKeys[1]]);
+            Assert.Equal(expectedBits[2], wordCodesDictionary[expectedKeys[2]]);
         }
     }
 }

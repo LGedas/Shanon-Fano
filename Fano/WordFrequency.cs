@@ -48,7 +48,10 @@ namespace Fano
 
             WordFrequency other = (WordFrequency)obj;
 
-            return Bits.Length == other.Bits.Length && Bits.Cast<bool>().SequenceEqual(other.Bits.Cast<bool>());
+            if (Bits.Length != other.Bits.Length)
+                return false;
+
+            return Bits.Cast<bool>().SequenceEqual(other.Bits.Cast<bool>());
         }
 
         public override int GetHashCode() 
