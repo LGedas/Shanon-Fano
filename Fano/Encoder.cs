@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace Fano
 {
     //This part of the program will encode-compress files
-    internal class Encoder
+    public class Encoder
     {
+
     }
 }
